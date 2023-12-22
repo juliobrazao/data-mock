@@ -1,0 +1,11 @@
+services:
+  data-mock:
+    container_name: data-mock
+    build:
+      context: .
+    command: node index
+    volumes:
+      - .:/src
+      - /src/node_modules
+    ports:
+      - 8082:3003
