@@ -2,9 +2,6 @@ const { getRandomNumber, getShuffleAbbreviation } = require('../functions/engine
 
 const firstNames = require('../models/first-names.model');
 const secondNames = require('../models/second-names.model');
-const streets = require('../models/streets.model');
-const cities = require('../models/cities.model');
-const states = require('../models/states.model');
 
 const getRandomFirstName = (letter) => {
   const firstNamesWithInitial = firstNames.filter(name => name[0].toUpperCase() === letter);
@@ -18,49 +15,32 @@ const getRandomSecondName = (letter) => {
   return secondNamesWithInitial[getRandomNumber(secondNamesWithInitialLength)];
 }
 
-const getRandomStreetName = (letter) => {
-  const streetNamesWithInitial = streets.filter(street => street[0].toUpperCase() === letter);
-  const streetNamesWithInitialLength = streetNamesWithInitial.length;
-  return streetNamesWithInitial[getRandomNumber(streetNamesWithInitialLength)];
-}
+const getRandomBornDate = () => {
+  const today = new Date();
+  const shuffleAge = getRandomNumber(100);
+  const shuffleMonth = getRandomNumber(12);
+  const shuffleDay = getRandomNumber(31);
 
-const getRandomCityName = (letter) => {
-  const cityNamesWithInitial = cities.filter(city => city[0].toUpperCase() === letter);
-  const cityNamesWithInitialLength = cityNamesWithInitial.length;
-  return cityNamesWithInitial[getRandomNumber(cityNamesWithInitialLength)];
-}
+  const yearSet = new Date(new Date().setYear(today.getUTCFullYear() - shuffleAge));
+  const monthSet = new Date(yearSet.setMonth(yearSet.getUTCMonth() - shuffleMonth));
+  const daySet = new Date(monthSet.setUTCDate(monthSet.getDay() - shuffleDay));
 
-const getRandomStateName = (letter) => {
-  const stateNamesWithInitial = states.filter(state => state[0].toUpperCase() === letter);
-  const stateNamesWithInitialLength = stateNamesWithInitial.length;
-  return stateNamesWithInitial[getRandomNumber(stateNamesWithInitialLength)];
+  return daySet;
 }
 
 const generateRandomPerson = () => {
-  const shuffleAbbreviation = getShuffleAbbreviation(2);
+  const shuffleAbbreviation = getShuffleAbbreviation(3);
 
   const firstLetter = shuffleAbbreviation[0];
   const secondLetter = shuffleAbbreviation[1];
+  const thirdLetter = shuffleAbbreviation[2];
 
-  const letterForStreet = getRandomFirstName(firstLetter)[1];
-  const letterForCity = getRandomFirstName(firstLetter)[2];
-  const letterForState = getRandomFirstName(firstLetter)[3];
-
-  const streetPreffix = !!(getRandomNumber(9)/2) ? 'R.' : 'Av.';
-
-  const fullName = getRandomFirstName(firstLetter) + ' ' + getRandomSecondName(secondLetter);
-  const streetName = streetPreffix + ' ' + getRandomStreetName(letterForStreet.toUpperCase()) + ', ' + getRandomNumber(9999);
-  const zipCode = getRandomNumber(99999).toString().padStart(5, '0') + '-' + getRandomNumber(999).toString().padStart(3, '0');
-  const cityName = getRandomCityName(letterForCity.toUpperCase());
-  const stateName = getRandomStateName(letterForState.toUpperCase());
+  const fullName = getRandomFirstName(firstLetter) + ' ' + getRandomSecondName(secondLetter) + ' ' + getRandomSecondName(thirdLetter);
 
   return {
     name: fullName,
-    street: streetName,
-    zipCode,
-    location: cityName,
-    province: stateName
-  }
+    bornIn: getRandomBornDate()
+  };
 }
 
 module.exports = {
